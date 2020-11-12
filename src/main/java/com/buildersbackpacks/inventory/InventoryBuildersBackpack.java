@@ -6,12 +6,16 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 
 public class InventoryBuildersBackpack extends Inventory{
-	
+	private static final int NUM_SLOTS = 12;
 	private static final String KEY_INVENTORY = "inventory";
+	
+	public InventoryBuildersBackpack() {
+		super(NUM_SLOTS);
+	}
 	
 	@Override
 	public int getSizeInventory() {
-		return 12;
+		return NUM_SLOTS;
 	}
 	
 	public void writeToItemStack(ItemStack stack) {
