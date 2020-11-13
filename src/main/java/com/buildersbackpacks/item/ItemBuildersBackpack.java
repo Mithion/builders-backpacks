@@ -17,6 +17,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -51,12 +54,14 @@ public class ItemBuildersBackpack extends Item {
 			//delegate item use
 			BlockRayTraceResult brtr = new BlockRayTraceResult(context.getHitVec(), context.getFace(), context.getPos(), context.isInside());
 			DelegatedItemUseContext delegated = new DelegatedItemUseContext(context.getWorld(), context.getPlayer(), context.getHand(), selected, brtr);
-			selected.getItem().onItemUse(delegated);				
+			ActionResultType result = selected.getItem().onItemUse(delegated);				
 			
-			//store changes
-			if (!context.getWorld().isRemote()) {
-				ibb.setInventorySlotContents(curIndex, selected);
-				ibb.writeToItemStack(backPackStack);
+			if (result.isSuccessOrConsume()) {
+				//store changes
+				if (!context.getWorld().isRemote()) {
+					ibb.setInventorySlotContents(curIndex, selected);
+					ibb.writeToItemStack(backPackStack);
+				}
 			}
 		}
 		
@@ -79,6 +84,8 @@ public class ItemBuildersBackpack extends Item {
 		
 		if (remote) {
 			sendActiveIndexChange(index);
+			Minecraft m = Minecraft.getInstance();
+			m.ingameGUI.remainingHighlightTicks = 20;
 		}
 	}
 	
@@ -88,5 +95,22 @@ public class ItemBuildersBackpack extends Item {
 				Minecraft.getInstance().getConnection().getNetworkManager(),
 				NetworkDirection.PLAY_TO_SERVER
 			);
+	}
+	
+	@Override
+	public ITextComponent getDisplayName(ItemStack stack) {
+		TranslationTextComponent base = (TranslationTextComponent) super.getDisplayName(stack);
+		int index = getActiveIndex(stack);
+		InventoryBuildersBackpack ibb = InventoryBuildersBackpack.fromItemStack(stack);
+		ItemStack selected = ibb.getStackInSlot(index);
+		base.append(new StringTextComponent(": "));
+		if (!selected.isEmpty()) {			
+			base.append(selected.getDisplayName());
+			base.append(new StringTextComponent(String.format(" (x%d)", selected.getCount())));
+		}else {
+			base.append(new TranslationTextComponent("gui.buildersbackpacks.backpack.empty"));
+		}
+		
+		return base;
 	}
 }

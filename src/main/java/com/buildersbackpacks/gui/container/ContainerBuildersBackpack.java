@@ -82,4 +82,33 @@ public class ContainerBuildersBackpack extends Container{
 
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
+
+	
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if (index < numRows() * slotsPerRow()) {
+                if (!this.mergeItemStack(itemstack1, numRows() * slotsPerRow(), this.inventorySlots
+                        .size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.mergeItemStack(itemstack1, 0, numRows() * slotsPerRow(), false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (itemstack1.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+        }
+
+        return itemstack;
+    }
 }
