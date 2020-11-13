@@ -9,6 +9,7 @@ import com.buildersbackpacks.gui.GuiBuildersBackpack;
 import com.buildersbackpacks.gui.GuiInit;
 import com.buildersbackpacks.gui.container.ContainerInit;
 import com.buildersbackpacks.item.ItemBuildersBackpack;
+import com.buildersbackpacks.keybind.KeybindInit;
 
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.Item;
@@ -45,7 +46,9 @@ public class BuildersBackpacks
         
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
         	FMLJavaModLoadingContext.get().getModEventBus().register(GuiInit.class);
+        	FMLJavaModLoadingContext.get().getModEventBus().register(KeybindInit.class);
         	MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
+        	
         });
         
         
