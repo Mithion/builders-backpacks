@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 license="All rights reserved"
 
 [[mods]]
 modId="buildersbackpacks"
-version="0.0.1"
+version="0.0.2"
 displayName="Builder's Backpacks"
 authors="Mithion" #optional
 # The description text for the mod (multi line!) (#mandatory)
@@ -15,12 +15,12 @@ A simple mod that makes setting up resources easier for builders in creative and
 [[dependencies.buildersbackpacks]]    
     modId="forge" #mandatory
     mandatory=true
-    versionRange="[34,)"    
+    versionRange="[35,)"    
     ordering="NONE"
     side="BOTH"
 [[dependencies.buildersbackpacks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3]"
+    versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"

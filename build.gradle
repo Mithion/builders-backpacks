@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.0.1'
+version = '0.0.2'
 group = 'com.buildersbackpacks' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'buildersbackpacks'
 
@@ -91,7 +91,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.3-34.1.23'
+    minecraft 'net.minecraftforge:forge:1.16.4-35.1.1' 
 
 }
 
@@ -101,7 +101,7 @@ jar {
         attributes([
             "Specification-Title": "buildersbackpacks",
             "Specification-Vendor": "Mithion",
-            "Specification-Version": "1", // We are version 1 of ourselves
+            "Specification-Version": "0.0.2", // We are version 1 of ourselves
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"examplemodsareus",
