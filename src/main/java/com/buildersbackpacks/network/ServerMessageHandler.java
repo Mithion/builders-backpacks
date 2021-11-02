@@ -35,7 +35,7 @@ public class ServerMessageHandler {
 		}		
 		
 		ctx.enqueueWork(() -> {
-			ItemStack stack = sendingPlayer.getHeldItemMainhand();
+			ItemStack stack = sendingPlayer.getMainHandItem();
 			if (stack.getItem() == BuildersBackpacks.BUILDERS_BACKPACK) {
 				ItemBuildersBackpack.setActiveIndex(stack, message.getIndex(), false);
 			}

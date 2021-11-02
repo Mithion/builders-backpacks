@@ -10,6 +10,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class GuiInit {
 	@SubscribeEvent
 	public static void onClientSetupEvent(FMLClientSetupEvent event) {
-		ScreenManager.registerFactory(ContainerInit.BUILDERS_BACKPACK, GuiBuildersBackpack::new);
+		ScreenManager.register(ContainerInit.BUILDERS_BACKPACK, GuiBuildersBackpack::new);
 	}
 }

@@ -15,7 +15,7 @@ public class NamedContainerBackpack implements INamedContainerProvider {
 
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player) {
-		return new ContainerBuildersBackpack(id, playerInventory, InventoryBuildersBackpack.fromItemStack(player.getHeldItemMainhand()));
+		return new ContainerBuildersBackpack(id, playerInventory, InventoryBuildersBackpack.fromItemStack(player.getMainHandItem()));
 	}
 
 	@Override

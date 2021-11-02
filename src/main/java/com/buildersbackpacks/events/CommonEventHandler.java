@@ -42,8 +42,8 @@ public class CommonEventHandler {
 		boolean collectedItem = false;
 		
 		PlayerInventory inv = event.getPlayer().inventory;
-		for (int i = 0; i < inv.getSizeInventory(); ++i) {
-			ItemStack stack = inv.getStackInSlot(i);
+		for (int i = 0; i < inv.getContainerSize(); ++i) {
+			ItemStack stack = inv.getItem(i);
 			if (stack.getItem() == BuildersBackpacks.BUILDERS_BACKPACK) {
 				InventoryBuildersBackpack ibb = InventoryBuildersBackpack.fromItemStack(stack);
 				int preCount = pickedUpItem.getCount();
@@ -60,7 +60,7 @@ public class CommonEventHandler {
 				event.getItem().setItem(pickedUpItem);
 				ForgeEventFactory.onItemPickup(event.getItem(), event.getPlayer());
 			}else {
-				event.getPlayer().onItemPickup(event.getItem(), originalQty);
+				event.getPlayer().take(event.getItem(), originalQty);
 				event.getItem().remove();
 				
 			}
@@ -73,12 +73,12 @@ public class CommonEventHandler {
 		if (reachIncrease == 0)
 			return;
 		
-		ItemStack stack = event.player.getHeldItemMainhand();
-		ModifiableAttributeInstance attr = event.player.getAttributeManager().createInstanceIfAbsent(ForgeMod.REACH_DISTANCE.get());
+		ItemStack stack = event.player.getMainHandItem();
+		ModifiableAttributeInstance attr = event.player.getAttributes().getInstance(ForgeMod.REACH_DISTANCE.get());
 		
 		if (stack.getItem() == BuildersBackpacks.BUILDERS_BACKPACK) {
 			if (!attr.hasModifier(REACH_INCREASE))
-				attr.applyPersistentModifier(REACH_INCREASE);
+				attr.addPermanentModifier(REACH_INCREASE);
 		}else {
 			if (attr.hasModifier(REACH_INCREASE))
 				attr.removeModifier(REACH_INCREASE);

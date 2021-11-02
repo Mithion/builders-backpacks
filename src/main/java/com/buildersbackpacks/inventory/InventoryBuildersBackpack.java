@@ -14,7 +14,7 @@ public class InventoryBuildersBackpack extends Inventory {
 	}
 
 	@Override
-	public int getSizeInventory() {
+	public int getContainerSize() {
 		return NUM_SLOTS;
 	}
 
@@ -36,8 +36,8 @@ public class InventoryBuildersBackpack extends Inventory {
 
 	public void read(ListNBT p_70486_1_) {
 		for (int i = 0; i < p_70486_1_.size(); ++i) {
-			ItemStack itemstack = ItemStack.read(p_70486_1_.getCompound(i));
-			this.setInventorySlotContents(i, itemstack);
+			ItemStack itemstack = ItemStack.of(p_70486_1_.getCompound(i));
+			this.setItem(i, itemstack);
 		}
 
 	}
@@ -45,9 +45,9 @@ public class InventoryBuildersBackpack extends Inventory {
 	public ListNBT write() {
 		ListNBT listnbt = new ListNBT();
 
-		for (int i = 0; i < this.getSizeInventory(); ++i) {
-			ItemStack itemstack = this.getStackInSlot(i);			
-			listnbt.add(itemstack.write(new CompoundNBT()));			
+		for (int i = 0; i < this.getContainerSize(); ++i) {
+			ItemStack itemstack = this.getItem(i);			
+			listnbt.add(itemstack.save(new CompoundNBT()));			
 		}
 
 		return listnbt;

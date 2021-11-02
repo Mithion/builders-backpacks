@@ -18,14 +18,14 @@ public class ContainerBuildersBackpack extends Container{
 	private ItemStack myStack;
 	
 	public ContainerBuildersBackpack(int id, PlayerInventory player) {
-		this(id, player, InventoryBuildersBackpack.fromItemStack(player.player.getHeldItemMainhand()));
+		this(id, player, InventoryBuildersBackpack.fromItemStack(player.player.getMainHandItem()));
 	}
 	
 	public ContainerBuildersBackpack(int id, PlayerInventory player, InventoryBuildersBackpack ibb) {
 		super(ContainerInit.BUILDERS_BACKPACK, id);
 		this.ibb = ibb;
-		myStack = player.player.getHeldItemMainhand();
-		myPlayerIndex = player.currentItem;
+		myStack = player.player.getMainHandItem();
+		myPlayerIndex = player.selected;
 		initializeSlots(player);
 	}
 	
@@ -49,7 +49,7 @@ public class ContainerBuildersBackpack extends Container{
         }
 
         for (int i1 = 0; i1 < 9; ++i1) {
-        	if (i1 == playerInv.currentItem)
+        	if (i1 == playerInv.selected)
         		mySlot = slotIndex;
             this.addSlot(new Slot(playerInv, i1, 34 + i1 * 18, 182 + i));
             slotIndex++;
@@ -62,50 +62,49 @@ public class ContainerBuildersBackpack extends Container{
 
 	protected int numRows() {
 		return 1;
-	}
-
+	}	
+	
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn) {
+	public boolean stillValid(PlayerEntity playerIn) {
 		return true;
 	}
 	
 	@Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
         ibb.writeToItemStack(myStack);
 	}
 
 	@Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {    	
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {    	
         if (slotId == mySlot || (clickTypeIn == ClickType.SWAP && dragType == myPlayerIndex))
         	return ItemStack.EMPTY;
 
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        return super.clicked(slotId, dragType, clickTypeIn, player);
     }
-
 	
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
+        Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
 
             if (index < numRows() * slotsPerRow()) {
-                if (!this.mergeItemStack(itemstack1, numRows() * slotsPerRow(), this.inventorySlots
+                if (!this.moveItemStackTo(itemstack1, numRows() * slotsPerRow(), this.slots
                         .size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, numRows() * slotsPerRow(), false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 0, numRows() * slotsPerRow(), false)) {
                 return ItemStack.EMPTY;
             }
 
             if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
         }
 

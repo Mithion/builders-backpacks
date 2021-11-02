@@ -11,8 +11,10 @@ public class BlockSlot extends Slot{
 		super(inventoryIn, index, xPosition, yPosition);
 	}
 
+	
+	
 	@Override
-	public boolean isItemValid(ItemStack stack) {
+	public boolean mayPlace(ItemStack stack) {
 		return stack.getItem() instanceof BlockItem;
 	}
 }

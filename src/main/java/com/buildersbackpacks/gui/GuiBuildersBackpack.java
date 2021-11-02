@@ -16,8 +16,8 @@ public class GuiBuildersBackpack extends ContainerScreen<ContainerBuildersBackpa
 	
 	public GuiBuildersBackpack(ContainerBuildersBackpack book, PlayerInventory inv, ITextComponent comp) {
 		super(book, inv, new StringTextComponent(""));
-        this.xSize = 229;
-        this.ySize = 152;
+        this.width = 229;
+        this.height = 152;
     }
 
 	public ResourceLocation texture() {
@@ -27,19 +27,20 @@ public class GuiBuildersBackpack extends ContainerScreen<ContainerBuildersBackpa
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+		this.renderTooltip(matrixStack, mouseX, mouseY);
 	}
 	
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {	}
+	protected void renderLabels(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
+	}
 	
 	@Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX,
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX,
                                                    int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(texture());
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
+        this.minecraft.getTextureManager().bind(texture());
+        int i = (this.width - this.width) / 2;
+        int j = (this.height - this.height) / 2;
+        this.blit(matrixStack, i, j, 0, 0, this.width, this.height);
     }
 }

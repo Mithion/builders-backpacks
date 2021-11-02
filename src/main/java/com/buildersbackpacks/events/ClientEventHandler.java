@@ -20,8 +20,8 @@ public class ClientEventHandler {
 	public static void wipeOpen()
     {
 		Minecraft m = Minecraft.getInstance();
-        m.keyboardListener.enableRepeatEvents(false);
-        while (KeybindInit.backpackUIOpen.isPressed())
+        m.keyboardHandler.setSendRepeatsToGui(false);
+        while (KeybindInit.backpackUIOpen.isDown())
         {
         }
     }
@@ -31,19 +31,19 @@ public class ClientEventHandler {
     {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.currentScreen == null)
+        if (mc.screen == null)
         {
-            boolean toolMenuKeyIsDown = KeybindInit.backpackUIOpen.isKeyDown();
+            boolean toolMenuKeyIsDown = KeybindInit.backpackUIOpen.consumeClick();
             if (toolMenuKeyIsDown && !toolMenuKeyWasDown)
             {
-                while (KeybindInit.backpackUIOpen.isPressed())
+                while (KeybindInit.backpackUIOpen.isDown())
                 {
-                    if (mc.currentScreen == null)
+                    if (mc.screen == null)
                     {
-                        ItemStack inHand = mc.player.getHeldItemMainhand();
+                        ItemStack inHand = mc.player.getMainHandItem();
                         if (inHand.getItem() instanceof ItemBuildersBackpack)
                         {
-                            mc.displayGuiScreen(new RadialMenuScreen());
+                            mc.setScreen(new RadialMenuScreen());
                         }
                     }
                 }
@@ -59,17 +59,17 @@ public class ClientEventHandler {
 	@SuppressWarnings("incomplete-switch")
 	public static boolean isKeyDown(KeyBinding keybind)
     {
-        if (keybind.isInvalid())
+        if (keybind.isUnbound())
             return false;        
         
         boolean isDown = false;
         switch (keybind.getKey().getType())
         {
             case KEYSYM:
-                isDown = InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), keybind.getKey().getKeyCode());
+                isDown = InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keybind.getKey().getValue());
                 break;
             case MOUSE:
-                isDown = GLFW.glfwGetMouseButton(Minecraft.getInstance().getMainWindow().getHandle(), keybind.getKey().getKeyCode()) == GLFW.GLFW_PRESS;
+                isDown = GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), keybind.getKey().getValue()) == GLFW.GLFW_PRESS;
                 break;
         }
         return isDown && keybind.getKeyConflictContext().isActive() && keybind.getKeyModifier().isActive(keybind.getKeyConflictContext());

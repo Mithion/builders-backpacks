@@ -29,37 +29,37 @@ public class ItemBuildersBackpack extends Item {
 	public static final String KEY_INDEX = "index";	
 	
 	public ItemBuildersBackpack() {
-		super(new Properties().maxStackSize(1).group(ItemGroup.TOOLS));
+		super(new Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS));
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		if (playerIn.isSneaking()) {
-			if (!worldIn.isRemote)
+	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+		if (playerIn.isCrouching()) {
+			if (!worldIn.isClientSide)
 				NetworkHooks.openGui((ServerPlayerEntity)playerIn, new NamedContainerBackpack());
-			return ActionResult.resultSuccess(playerIn.getHeldItemMainhand());
+			return ActionResult.success(playerIn.getMainHandItem());
 		}
-		return super.onItemRightClick(worldIn, playerIn, handIn);
+		return super.use(worldIn, playerIn, handIn);
 	}
-
+	
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context) {
-		ItemStack backPackStack = context.getItem();
+	public ActionResultType useOn(ItemUseContext context) {
+		ItemStack backPackStack = context.getItemInHand();
 		InventoryBuildersBackpack ibb = InventoryBuildersBackpack.fromItemStack(backPackStack);
 		int curIndex = getActiveIndex(backPackStack);
-		if (curIndex < 0 || curIndex >= ibb.getSizeInventory())
+		if (curIndex < 0 || curIndex >= ibb.getContainerSize())
 			curIndex = 0;
-		ItemStack selected = ibb.getStackInSlot(curIndex);			
+		ItemStack selected = ibb.getItem(curIndex);			
 		if (!selected.isEmpty()) {
 			//delegate item use
-			BlockRayTraceResult brtr = new BlockRayTraceResult(context.getHitVec(), context.getFace(), context.getPos(), context.isInside());
-			DelegatedItemUseContext delegated = new DelegatedItemUseContext(context.getWorld(), context.getPlayer(), context.getHand(), selected, brtr);
-			ActionResultType result = selected.getItem().onItemUse(delegated);				
+			BlockRayTraceResult brtr = new BlockRayTraceResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), context.isInside());
+			DelegatedItemUseContext delegated = new DelegatedItemUseContext(context.getLevel(), context.getPlayer(), context.getHand(), selected, brtr);
+			ActionResultType result = selected.getItem().useOn(delegated);				
 			
-			if (result.isSuccessOrConsume()) {
+			if (result.consumesAction()) {
 				//store changes
-				if (!context.getWorld().isRemote()) {
-					ibb.setInventorySlotContents(curIndex, selected);
+				if (!context.getLevel().isClientSide()) {
+					ibb.setItem(curIndex, selected);
 					ibb.writeToItemStack(backPackStack);
 				}
 			}
@@ -85,24 +85,24 @@ public class ItemBuildersBackpack extends Item {
 		if (remote) {
 			sendActiveIndexChange(index);
 			Minecraft m = Minecraft.getInstance();
-			m.ingameGUI.remainingHighlightTicks = 20;
+			m.gui.toolHighlightTimer = 20;
 		}
 	}
 	
 	public static void sendActiveIndexChange(int newIndex) {
 		NetworkInit.network.sendTo(
 				new BackpackSlotChangeMessage(newIndex),
-				Minecraft.getInstance().getConnection().getNetworkManager(),
+				Minecraft.getInstance().getConnection().getConnection(),
 				NetworkDirection.PLAY_TO_SERVER
 			);
 	}
 	
 	@Override
-	public ITextComponent getDisplayName(ItemStack stack) {
-		TranslationTextComponent base = (TranslationTextComponent) super.getDisplayName(stack);
+	public ITextComponent getName(ItemStack stack) {
+		TranslationTextComponent base = (TranslationTextComponent) super.getName(stack);
 		int index = getActiveIndex(stack);
 		InventoryBuildersBackpack ibb = InventoryBuildersBackpack.fromItemStack(stack);
-		ItemStack selected = ibb.getStackInSlot(index);
+		ItemStack selected = ibb.getItem(index);
 		base.append(new StringTextComponent(": "));
 		if (!selected.isEmpty()) {			
 			base.append(selected.getDisplayName());

@@ -43,12 +43,12 @@ public class RadialMenuScreen extends Screen
         
         mc = Minecraft.getInstance();        
         
-        this.stackEquipped = mc.player.getHeldItemMainhand();
+        this.stackEquipped = mc.player.getMainHandItem();
         if (this.stackEquipped.getItem() instanceof ItemBuildersBackpack)
         {
         	inventory = InventoryBuildersBackpack.fromItemStack(this.stackEquipped);
         } else {
-        	this.closeScreen();
+        	this.onClose();
         }
                 
         menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost()
@@ -93,7 +93,7 @@ public class RadialMenuScreen extends Screen
             return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.currentScreen instanceof RadialMenuScreen)
+        if (mc.screen instanceof RadialMenuScreen)
         {
             event.setCanceled(true);
         }
@@ -115,7 +115,7 @@ public class RadialMenuScreen extends Screen
 
         if (menu.isClosed())
         {
-            Minecraft.getInstance().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             ClientEventHandler.wipeOpen();
         }
         if (!menu.isReady() || inventory == null)
@@ -123,7 +123,7 @@ public class RadialMenuScreen extends Screen
             return;
         }
 
-        ItemStack inHand = minecraft.player.getHeldItemMainhand();
+        ItemStack inHand = minecraft.player.getMainHandItem();
         if (!(inHand.getItem() instanceof ItemBuildersBackpack))
         {
             inventory = null;
@@ -145,7 +145,7 @@ public class RadialMenuScreen extends Screen
 
         if (inventory == null)
         {
-            Minecraft.getInstance().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
         }
         else if (!ClientEventHandler.isKeyDown(KeybindInit.backpackUIOpen))
         {        	
@@ -180,16 +180,16 @@ public class RadialMenuScreen extends Screen
         if (inventory == null)
             return;
 
-        ItemStack inHand = minecraft.player.getHeldItemMainhand();
+        ItemStack inHand = minecraft.player.getMainHandItem();
         if (!(inHand.getItem() instanceof ItemBuildersBackpack))
         	return;
 
         if (needsRecheckStacks)
         {
             cachedMenuItems.clear();                        
-            for (int i = 0; i < inventory.getSizeInventory(); ++i)
+            for (int i = 0; i < inventory.getContainerSize(); ++i)
             {
-            	ItemStack inSlot = inventory.getStackInSlot(i);
+            	ItemStack inSlot = inventory.getItem(i);
             	final int index = i;
                 ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(menu, i, inSlot, new TranslationTextComponent("gui.buildersbackpacks.backpack.empty"))
                 {
